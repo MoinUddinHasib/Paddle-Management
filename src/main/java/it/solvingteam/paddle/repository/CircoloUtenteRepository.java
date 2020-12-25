@@ -1,5 +1,6 @@
 package it.solvingteam.paddle.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,8 @@ public interface CircoloUtenteRepository extends JpaRepository<CircoloUtente, In
 	
 	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.utente.id = ?2")
 	Optional<CircoloUtente> findByCircoloAndUtente(Integer cid, Integer uid);
+	
+	@Query("FROM CircoloUtente e WHERE e.stato = 'IN_LAVORAZIONE' ")
+	List<CircoloUtente> findTuttiInLavorazione();
 
 }

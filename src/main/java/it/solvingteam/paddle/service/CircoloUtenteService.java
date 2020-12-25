@@ -18,6 +18,11 @@ public class CircoloUtenteService {
 	    
 	@Autowired
 	private CircoloUtenteMapper circoloUtenteMapper;
+	
+    public List<CircoloUtenteDTO> findAllInLavorazione() {
+        List<CircoloUtente> allCircoliUtenti = this.circoloUtenteRepository.findTuttiInLavorazione();
+        return circoloUtenteMapper.convertEntityToDto(allCircoliUtenti);
+    }
 	    
     public List<CircoloUtenteDTO> findAll() {
         List<CircoloUtente> allCircoliUtenti = this.circoloUtenteRepository.findAll();
