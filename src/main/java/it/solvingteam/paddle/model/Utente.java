@@ -30,7 +30,7 @@ public class Utente {
 	
 	private String email;
 	
-	private String cellulare;
+	private Integer cellulare;
 	
 	@Enumerated(EnumType.STRING)
 	private Ruolo ruolo;
@@ -38,6 +38,8 @@ public class Utente {
 	private Byte[] foto;
 	
 	private Integer livello;
+	
+	private String password;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "utente")
 	private List<CircoloUtente> circoli = new ArrayList<>();
@@ -85,11 +87,11 @@ public class Utente {
 		this.email = email;
 	}
 
-	public String getCellulare() {
+	public Integer getCellulare() {
 		return cellulare;
 	}
 
-	public void setCellulare(String cellulare) {
+	public void setCellulare(Integer cellulare) {
 		this.cellulare = cellulare;
 	}
 
@@ -115,6 +117,14 @@ public class Utente {
 
 	public void setLivello(Integer livello) {
 		this.livello = livello;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public List<CircoloUtente> getCircoli() {

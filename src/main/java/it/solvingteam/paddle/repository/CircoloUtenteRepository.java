@@ -10,8 +10,8 @@ import it.solvingteam.paddle.model.CircoloUtente;
 
 public interface CircoloUtenteRepository extends JpaRepository<CircoloUtente, Integer> {
 	
-	@Query("FROM CircoloUtente e WHERE e.utente.id = ?2 and e.tipo = 'CREAZIONE' and e.stato = 'APPROVATO'")
-	Optional<CircoloUtente> findCircoloApprovato(Integer uid);
+	@Query("FROM CircoloUtente e WHERE e.utente.id = ?1 and e.tipo = 'CREAZIONE' and e.stato = 'APPROVATO'")
+	Optional<CircoloUtente> findCircoloApprovatoByUtente(Integer uid);
 	
 	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.utente.id = ?2 and e.tipo = 'CREAZIONE'")
 	Optional<CircoloUtente> findCreazioneByCircoloAndUtente(Integer cid, Integer uid);
@@ -19,6 +19,13 @@ public interface CircoloUtenteRepository extends JpaRepository<CircoloUtente, In
 	@Query("FROM CircoloUtente e WHERE e.stato = 'IN_LAVORAZIONE' and e.tipo = 'CREAZIONE'")
 	List<CircoloUtente> findAllCreazioniInLavorazione();
 
+	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.stato = 'APPROVATO' and e.tipo = 'CREAZIONE'")
+	Optional<CircoloUtente> findByCircoloApprovatoById(Integer cid);
 	
+	@Query("FROM CircoloUtente e WHERE e.utente.id = ?1 and e.tipo = 'ISCRIZIONE'")
+	Optional<CircoloUtente> findIscrizioneByUtente(Integer uid);
+	
+	@Query("FROM CircoloUtente e WHERE e.utente.id = ?1 and e.tipo = 'CREAZIONE' and e.stato != 'NON_APPROVATO'")
+	Optional<CircoloUtente> findCircoloNotRifiutatoByUtente(Integer uid);
 
 }

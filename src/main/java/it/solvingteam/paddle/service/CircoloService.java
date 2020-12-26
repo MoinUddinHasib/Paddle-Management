@@ -8,56 +8,58 @@ import org.springframework.stereotype.Service;
 import it.solvingteam.paddle.dto.CircoloDTO;
 import it.solvingteam.paddle.mapper.CircoloMapper;
 import it.solvingteam.paddle.model.Circolo;
+import it.solvingteam.paddle.model.CircoloUtente;
+import it.solvingteam.paddle.model.Utente;
 import it.solvingteam.paddle.repository.CircoloRepository;
+import it.solvingteam.paddle.repository.CircoloUtenteRepository;
+import it.solvingteam.paddle.repository.UtenteRepository;
 
 @Service
 public class CircoloService {
 
 	@Autowired
 	private CircoloRepository circoloRepository;
+	
+	@Autowired
+	private UtenteRepository utenteRepository;
+	
+	@Autowired
+	private CircoloUtenteRepository circoloUtenteRepository;
 	    
 	@Autowired
 	private CircoloMapper circoloMapper;
-	    
-    public List<CircoloDTO> findAll() {
-        List<Circolo> allCircoli = this.circoloRepository.findAll();
+
+	public List<CircoloDTO> findAllCircoliAttivi() {
+		List<Circolo> allCircoli = this.circoloRepository.findAllCircoliApprovati();
         return circoloMapper.convertEntityToDto(allCircoli);
-    }
-
-    public CircoloDTO getById(String id) throws Exception {
-    	if(id==null || isNaN(id)) {
-    		throw new Exception("id non valido");
-    	}
-    	Circolo c= circoloRepository.findById(Integer.parseInt(id)).orElse(null);
-    	if(c==null) {
-    		throw new Exception("Circolo non trovato");
-    	}
-    	return circoloMapper.convertEntityToDto(c);
-    }
-    
-    public void delete(String id) throws Exception {
-    	CircoloDTO c = this.getById(id);
-    	circoloRepository.delete(circoloMapper.convertDtoToEntity(c));
-    }
-
-	public CircoloDTO inserisci(CircoloDTO circoloDTO) throws Exception {
-		if(circoloDTO == null) {
-			throw new Exception("Input non valido");
-		}
-		if(circoloDTO.getId()!=null) {
-			throw new Exception("Id deve essere null");
-		}
-		
-		return this.getById(circoloRepository.save(circoloMapper.convertDtoToEntity(circoloDTO)).getId().toString());
 	}
 
-	public CircoloDTO aggiorna(CircoloDTO circoloDTO) throws Exception {
-		if(circoloDTO == null) {
+	public CircoloDTO inserisci(CircoloDTO circoloDTO, String uid) throws Exception {
+		if(uid==null || isNaN(uid) ||circoloDTO==null || circoloDTO.getNome()==null || circoloDTO.getNome().isEmpty() ||
+				circoloDTO.getCity()==null || circoloDTO.getCity().isEmpty() || circoloDTO.getLogo()==null) {//TODO logo
 			throw new Exception("Input non valido");
 		}
-		this.getById(circoloDTO.getId());		
-		return this.getById(circoloRepository.save(circoloMapper.convertDtoToEntity(circoloDTO)).getId().toString());		
+		CircoloUtente cu = circoloUtenteRepository.findCircoloNotRifiutatoByUtente(Integer.parseInt(uid)).orElse(null);
+		if(cu!=null) {
+			throw new Exception("Hai già una proposta di un circolo");
+		}
+		Utente u = utenteRepository.getOne(Integer.parseInt(uid));
+		if(u==null) {
+			throw new Exception("Utente inesistente");
+		}
+		Circolo c= circoloRepository.save(circoloMapper.convertDtoToEntity(circoloDTO));
+		CircoloUtente cuRis=new CircoloUtente();
+		cuRis.setUtente(u);
+		cuRis.setCircolo(c);
+		cuRis.setStato(CircoloUtente.Stato.IN_LAVORAZIONE);
+		cuRis.setTipo(CircoloUtente.Tipo.CREAZIONE);
+		circoloUtenteRepository.save(cuRis);
+		return this.getById(c.getId().toString());
 	}
+	
+	private CircoloDTO getById(String id){
+    	return circoloMapper.convertEntityToDto(circoloRepository.findById(Integer.parseInt(id)).orElse(null));
+    }
 
 	private boolean isNaN(String input) {
 		try {

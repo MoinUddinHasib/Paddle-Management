@@ -19,6 +19,8 @@ public class UtenteDTO {
 	private Byte[] foto;
 	
 	private String livello;
+	
+	private String password;
 
 	public String getId() {
 		return id;
@@ -90,6 +92,14 @@ public class UtenteDTO {
 
 	public void setLivello(String livello) {
 		this.livello = livello;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 }
