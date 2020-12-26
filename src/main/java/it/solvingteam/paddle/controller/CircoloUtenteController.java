@@ -25,38 +25,26 @@ public class CircoloUtenteController {
 
     @Autowired
     private CircoloUtenteService circoloUtenteService;
-
-    @PutMapping
-    public ResponseEntity<CircoloUtenteDTO> update(@RequestBody CircoloUtenteDTO circoloUtenteDTO) throws Exception {
-    	return ResponseEntity.ok().body(circoloUtenteService.aggiorna(circoloUtenteDTO));
+//    
+//    @PostMapping
+//    public ResponseEntity<CircoloUtenteDTO> create(@RequestBody CircoloUtenteDTO circoloUtenteDTO) throws Exception {
+//    	return ResponseEntity.ok().body(circoloUtenteService.inserisci(circoloUtenteDTO));
+//    }
+ 
+    
+    @PutMapping("/rifiuta{idc}/{idu}")
+    public ResponseEntity<CircoloUtenteDTO> rifiutaCreazione(@PathVariable("idc") String idc, @PathVariable("idu") String idu) throws Exception {
+    	return ResponseEntity.ok().body(circoloUtenteService.rifiutaCreazione(idc,idu));
     }
     
-    @PostMapping
-    public ResponseEntity<CircoloUtenteDTO> create(@RequestBody CircoloUtenteDTO circoloUtenteDTO) throws Exception {
-    	return ResponseEntity.ok().body(circoloUtenteService.inserisci(circoloUtenteDTO));
+    @PutMapping("/approva/{idc}/{idu}")
+    public ResponseEntity<CircoloUtenteDTO> approvaCreazione(@PathVariable("idc") String idc, @PathVariable("idu") String idu) throws Exception {
+    	return ResponseEntity.ok().body(circoloUtenteService.approvaCreazione(idc,idu));
     }
-    
-    @DeleteMapping("/{idc}/{idu}")
-    public ResponseEntity<CircoloUtenteDTO> delete(@PathVariable("idc") String idc, @PathVariable("idu") String idu) throws Exception {
-		circoloUtenteService.delete(idc,idu);
-		return ResponseEntity.ok().build();
-
-    } 
-    
-    @GetMapping("/{idc}/{idu}")
-    public ResponseEntity<CircoloUtenteDTO> getOne(@PathVariable("idc") String idc, @PathVariable("idu") String idu) throws Exception {
-		return ResponseEntity.ok().body(circoloUtenteService.getById(idc,idu));
-    }    
     
     @GetMapping("/inLavorazione")
-    public ResponseEntity<List<CircoloUtenteDTO>> getAllPending() {
-    	List<CircoloUtenteDTO> resultProposteDTO = circoloUtenteService.findAllInLavorazione();
-        return ResponseEntity.ok().body(resultProposteDTO);
-    }
-    
-    @GetMapping
-    public ResponseEntity<List<CircoloUtenteDTO>> getAll() {
-    	List<CircoloUtenteDTO> resultProposteDTO = circoloUtenteService.findAll();
+    public ResponseEntity<List<CircoloUtenteDTO>> getAllCreazioniPending() {
+    	List<CircoloUtenteDTO> resultProposteDTO = circoloUtenteService.findCreazioniInLavorazione();
         return ResponseEntity.ok().body(resultProposteDTO);
     }
 

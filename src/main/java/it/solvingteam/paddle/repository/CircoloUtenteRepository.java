@@ -10,10 +10,15 @@ import it.solvingteam.paddle.model.CircoloUtente;
 
 public interface CircoloUtenteRepository extends JpaRepository<CircoloUtente, Integer> {
 	
-	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.utente.id = ?2")
-	Optional<CircoloUtente> findByCircoloAndUtente(Integer cid, Integer uid);
+	@Query("FROM CircoloUtente e WHERE e.utente.id = ?2 and e.tipo = 'CREAZIONE' and e.stato = 'APPROVATO'")
+	Optional<CircoloUtente> findCircoloApprovato(Integer uid);
 	
-	@Query("FROM CircoloUtente e WHERE e.stato = 'IN_LAVORAZIONE' ")
-	List<CircoloUtente> findTuttiInLavorazione();
+	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.utente.id = ?2 and e.tipo = 'CREAZIONE'")
+	Optional<CircoloUtente> findCreazioneByCircoloAndUtente(Integer cid, Integer uid);
+	
+	@Query("FROM CircoloUtente e WHERE e.stato = 'IN_LAVORAZIONE' and e.tipo = 'CREAZIONE'")
+	List<CircoloUtente> findAllCreazioniInLavorazione();
+
+	
 
 }
