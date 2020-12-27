@@ -25,6 +25,8 @@ public class Campo {
     @JoinColumn(name = "circolo_fk")
 	private Circolo circolo;
 	
+	private Boolean aperto;
+	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "campo")
 	private List<Partita> partite = new ArrayList<>();
 
@@ -50,6 +52,14 @@ public class Campo {
 
 	public void setCircolo(Circolo circolo) {
 		this.circolo = circolo;
+	}
+
+	public Boolean getAperto() {
+		return aperto;
+	}
+
+	public void setAperto(Boolean aperto) {
+		this.aperto = aperto;
 	}
 
 	public List<Partita> getPartite() {

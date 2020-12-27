@@ -7,6 +7,8 @@ public class CampoDTO {
 	private String nome;
 	
 	private String circoloId;
+	
+	private String aperto;
 
 	public String getId() {
 		return id;
@@ -30,6 +32,14 @@ public class CampoDTO {
 
 	public void setCircoloId(String circoloId) {
 		this.circoloId = circoloId;
+	}
+
+	public String getAperto() {
+		return aperto;
+	}
+
+	public void setAperto(String aperto) {
+		this.aperto = aperto;
 	}
 
 }
