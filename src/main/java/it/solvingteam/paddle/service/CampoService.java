@@ -1,5 +1,6 @@
 package it.solvingteam.paddle.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import it.solvingteam.paddle.mapper.CampoMapper;
 import it.solvingteam.paddle.model.Campo;
 import it.solvingteam.paddle.model.Circolo;
 import it.solvingteam.paddle.model.CircoloUtente;
+import it.solvingteam.paddle.model.Partita;
+import it.solvingteam.paddle.model.Slot;
 import it.solvingteam.paddle.repository.CampoRepository;
 import it.solvingteam.paddle.repository.CircoloUtenteRepository;
 
@@ -25,8 +28,11 @@ public class CampoService {
 	@Autowired
 	private CampoMapper campoMapper;
 	
-	public List<CampoDTO> getAllMyCampi(String idu) {
-		List<Campo> allCampi = this.campoRepository.findAllMy(idu);
+	public List<CampoDTO> getAllMyCampi(String idu) throws Exception {
+		if(idu==null || isNaN(idu)) {
+    		throw new Exception("id non valido");
+    	}
+		List<Campo> allCampi = this.campoRepository.findAllMy(Integer.parseInt(idu));
         return campoMapper.convertEntityToDto(allCampi);
 	}
 
@@ -57,15 +63,23 @@ public class CampoService {
 		
 		return this.getById(campoRepository.save(campo).getId().toString());
 	}
-//
-//	public CampoDTO aggiorna(CampoDTO campoDTO) throws Exception {
-//		if(campoDTO == null) {
-//			throw new Exception("Input non valido");
-//		}
-//		this.getById(campoDTO.getId());	
-//		return this.getById(campoRepository.save(campoMapper.convertDtoToEntity(campoDTO)).getId().toString());		
-//	}
-//
+
+	public CampoDTO aggiorna(CampoDTO campoDTO, String idu) throws Exception {
+		if(campoDTO == null || campoDTO.getNome()==null || campoDTO.getNome().isEmpty() || campoDTO.getId()==null || isNaN(campoDTO.getId())
+				|| idu==null || isNaN(idu)) {
+			throw new Exception("Input non valido");
+		}
+		Campo c =campoRepository.getByIdCampoAndUtente(Integer.parseInt(campoDTO.getId()),Integer.parseInt(idu));
+		if(c==null) {
+			throw new Exception("Campo inesistente");
+		}
+		if(controllaPartite(c.getPartite())) {
+			throw new Exception("Non è possibile modificare");
+		}
+		c.setNome(campoDTO.getNome());
+		return this.getById(campoRepository.save(c).getId().toString());		
+	}
+
 	private boolean isNaN(String input) {
 		try {
 			Integer.parseInt(input);
@@ -73,6 +87,35 @@ public class CampoService {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean controllaPartite(List<Partita> partite) {
+		LocalDateTime ldt=LocalDateTime.now();
+		for(Partita p : partite) {
+			if(ldt.toLocalDate().compareTo(p.getData())<0) {
+				return true;
+			}
+			Slot s = p.getSlots().get(0);
+			if(ldt.toLocalDate().compareTo(p.getData())==0 && ldt.getHour()<s.getOra() && (s.getMinuti()-ldt.getMinute())>30) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public CampoDTO dismetti(String idu, String idc) throws Exception {
+		if(idc == null || isNaN(idc) || idu==null || isNaN(idu)) {
+			throw new Exception("Input non valido");
+		}
+		Campo c =campoRepository.getByIdCampoAndUtente(Integer.parseInt(idc),Integer.parseInt(idu));
+		if(c==null) {
+			throw new Exception("Campo inesistente");
+		}
+		if(controllaPartite(c.getPartite())) {
+			throw new Exception("Non è possibile modificare");
+		}
+		c.setAperto(false);
+		return this.getById(campoRepository.save(c).getId().toString());
 	}
 
 

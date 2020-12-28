@@ -18,4 +18,11 @@ Endpoint:
 	GET /campo/{idu}				-> Lista di tutti i miei campi
 	GET /partita/{idc}/{data}			-> Lista di tutte le partite dato un campo ed una data
 	POST /campo/{idu}				-> Crea un campo
+	PUT /campo/{idu}				-> Aggiorna un campo
+	DELETE /campo/{idu}/{idc}			-> Dismetti campo
+	PUT /partita/paga/{idp}/{idu}			-> Paga partita
+	POST /notizia/{idu}				-> Inserisci notizia
+	PUT /notizia/{idu}				-> Modifica notizia
+	DELETE /notizia/{idn}/{idu}			-> Cancella notizia
+	
 

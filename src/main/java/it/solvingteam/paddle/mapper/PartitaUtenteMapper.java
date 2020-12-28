@@ -1,12 +1,14 @@
 package it.solvingteam.paddle.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import it.solvingteam.paddle.dto.PartitaUtenteDTO;
 import it.solvingteam.paddle.model.PartitaUtente;
 import it.solvingteam.paddle.service.PartitaService;
 import it.solvingteam.paddle.service.UtenteService;
 
+@Component
 public class PartitaUtenteMapper extends AbstractMapper<PartitaUtente, PartitaUtenteDTO> {
 	
     @Autowired

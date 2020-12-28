@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,11 +22,11 @@ public class PartitaController {
 
     @Autowired
     private PartitaService partitaService;
-//
-//    @PutMapping
-//    public ResponseEntity<PartitaDTO> update(@RequestBody PartitaDTO partitaDTO) throws Exception {
-//    	return ResponseEntity.ok().body(partitaService.aggiorna(partitaDTO));
-//    }
+
+    @PutMapping("/paga/{idp}/{idu}")
+    public ResponseEntity<PartitaDTO> update(@PathVariable("idp") String idp, @PathVariable("idu") String idu) throws Exception {
+    	return ResponseEntity.ok().body(partitaService.paga(idp,idu));
+    }
 //    
 //    @PostMapping
 //    public ResponseEntity<PartitaDTO> create(@RequestBody PartitaDTO partitaDTO) throws Exception {

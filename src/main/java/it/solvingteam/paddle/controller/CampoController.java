@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,19 +25,16 @@ public class CampoController {
 
     @Autowired
     private CampoService campoService;
+    
+    @DeleteMapping("/{idu}/{idc}")
+    public ResponseEntity<CampoDTO> dismetti(@PathVariable("idu") String idu, @PathVariable("idc") String idc) throws Exception {
+    	return ResponseEntity.ok().body(campoService.dismetti(idu,idc));
+    }
 
-//    @PutMapping
-//    public ResponseEntity<CampoDTO> update(@RequestBody CampoDTO campoDTO) throws Exception {
-//    	return ResponseEntity.ok().body(campoService.aggiorna(campoDTO));
-//    }
-//    
-//    
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<CampoDTO> delete(@PathVariable("id") String id) throws Exception {
-//		campoService.delete(id);
-//		return ResponseEntity.ok().build();
-//
-//    } 
+    @PutMapping("/{idu}")
+    public ResponseEntity<CampoDTO> update(@RequestBody CampoDTO campoDTO, @PathVariable("idu") String idu) throws Exception {
+    	return ResponseEntity.ok().body(campoService.aggiorna(campoDTO,idu));
+    }
     
 	@PostMapping("/{idu}")
 	public ResponseEntity<CampoDTO> create(@RequestBody CampoDTO campoDTO, @PathVariable("idu") String idu) throws Exception {
@@ -43,7 +42,7 @@ public class CampoController {
 	}
     
     @GetMapping("/{idu}")
-    public ResponseEntity<List<CampoDTO>> getOne(@PathVariable("idu") String idu) throws Exception {
+    public ResponseEntity<List<CampoDTO>> getAllMine(@PathVariable("idu") String idu) throws Exception {
 		return ResponseEntity.ok().body(campoService.getAllMyCampi(idu));
     } 
 

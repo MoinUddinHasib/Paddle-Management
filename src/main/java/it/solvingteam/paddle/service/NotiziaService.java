@@ -1,13 +1,15 @@
 package it.solvingteam.paddle.service;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.solvingteam.paddle.dto.NotiziaDTO;
 import it.solvingteam.paddle.mapper.NotiziaMapper;
+import it.solvingteam.paddle.model.CircoloUtente;
 import it.solvingteam.paddle.model.Notizia;
+import it.solvingteam.paddle.repository.CircoloUtenteRepository;
 import it.solvingteam.paddle.repository.NotiziaRepository;
 
 @Service
@@ -15,16 +17,14 @@ public class NotiziaService {
 
 	@Autowired
 	private NotiziaRepository notiziaRepository;
+	
+	@Autowired
+	private CircoloUtenteRepository circoloUtenteRepository;
 	    
 	@Autowired
 	private NotiziaMapper notiziaMapper;
-	    
-    public List<NotiziaDTO> findAll() {
-        List<Notizia> allNotizie = this.notiziaRepository.findAll();
-        return notiziaMapper.convertEntityToDto(allNotizie);
-    }
 
-    public NotiziaDTO getById(String id) throws Exception {
+    private NotiziaDTO getById(String id) throws Exception {
     	if(id==null || isNaN(id)) {
     		throw new Exception("id non valido");
     	}
@@ -34,29 +34,46 @@ public class NotiziaService {
     	}
     	return notiziaMapper.convertEntityToDto(c);
     }
-    
-    public void delete(String id) throws Exception {
-    	NotiziaDTO c = this.getById(id);
-    	notiziaRepository.delete(notiziaMapper.convertDtoToEntity(c));
-    }
 
-	public NotiziaDTO inserisci(NotiziaDTO notiziaDTO) throws Exception {
-		if(notiziaDTO == null) {
+	public NotiziaDTO inserisci(NotiziaDTO notiziaDTO, String idu) throws Exception {
+		if(notiziaDTO == null || idu==null || isNaN(idu)) {
 			throw new Exception("Input non valida");
 		}
-		if(notiziaDTO.getId()!=null) {
-			throw new Exception("Id deve essere null");
+		CircoloUtente cu = circoloUtenteRepository.findCircoloApprovatoByUtente(Integer.parseInt(idu)).orElse(null);
+		if(cu==null) {
+			throw new Exception("Non hai un circolo");
 		}
-		
-		return this.getById(notiziaRepository.save(notiziaMapper.convertDtoToEntity(notiziaDTO)).getId().toString());
+		Notizia n = new Notizia();
+		n.setMessagio(notiziaDTO.getMessagio());
+		n.setData(LocalDate.now());
+		n.setCircolo(cu.getCircolo());
+		return this.getById(notiziaRepository.save(n).getId().toString());
 	}
 
-	public NotiziaDTO aggiorna(NotiziaDTO notiziaDTO) throws Exception {
-		if(notiziaDTO == null) {
+	public NotiziaDTO aggiorna(NotiziaDTO notiziaDTO, String idu) throws Exception {
+		if(notiziaDTO == null || notiziaDTO.getMessagio()==null || notiziaDTO.getMessagio().isEmpty() ||
+				notiziaDTO.getId()==null || isNaN(notiziaDTO.getId())) {
 			throw new Exception("Input non valida");
 		}
-		this.getById(notiziaDTO.getId());	
-		return this.getById(notiziaRepository.save(notiziaMapper.convertDtoToEntity(notiziaDTO)).getId().toString());		
+		Notizia n=notiziaRepository.getNotiziaByIdnIdu(Integer.parseInt(notiziaDTO.getId()),Integer.parseInt(idu));
+		if(n==null) {
+			throw new Exception("Notizia inesistente");
+		}
+		n.setMessagio(notiziaDTO.getMessagio());
+		n.setData(LocalDate.parse(notiziaDTO.getData()));
+		return this.getById(notiziaRepository.save(n).getId().toString());		
+	}
+	
+
+	public void delete(String idn, String idu) throws Exception {
+		if(isNaN(idn) || isNaN(idu)) {
+			throw new Exception("Errore input");
+		}
+		Notizia n=notiziaRepository.getNotiziaByIdnIdu(Integer.parseInt(idn),Integer.parseInt(idu));
+		if(n==null) {
+			throw new Exception("Notizia inesistente");
+		}
+		notiziaRepository.delete(n);
 	}
 
 	private boolean isNaN(String input) {
@@ -67,4 +84,5 @@ public class NotiziaService {
 		}
 		return false;
 	}
+
 }

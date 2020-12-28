@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
-public class Slot {
+public class Slot implements Comparable<Slot>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,5 +63,9 @@ public class Slot {
 		this.partite = partite;
 	}
 
+	@Override
+	public int compareTo(Slot o) {
+		return id.compareTo(o.getId());
+	}
 
 }
