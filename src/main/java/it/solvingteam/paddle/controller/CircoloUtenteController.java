@@ -24,12 +24,28 @@ public class CircoloUtenteController {
     @Autowired
     private CircoloUtenteService circoloUtenteService;
     
+    @PutMapping("/iscrizione/disapprova/{idc}/{idu}/{ida}")
+    public ResponseEntity<CircoloUtenteDTO> rifiutaPartecipazione(@PathVariable("idu") String idu, @PathVariable("idc") String idc, @PathVariable("ida") String ida) throws Exception {
+        return ResponseEntity.ok().body(circoloUtenteService.rifiutaPartecipazione(idc,idu,ida));
+    }
+    
+    @PutMapping("/iscrizione/accetta/{idc}/{idu}/{ida}")
+    public ResponseEntity<CircoloUtenteDTO> approvaPartecipazione(@PathVariable("idu") String idu, @PathVariable("idc") String idc, @PathVariable("ida") String ida) throws Exception {
+        return ResponseEntity.ok().body(circoloUtenteService.approvaPartecipazione(idc,idu,ida));
+    }
+    
+    @GetMapping("/iscrizione/{idu}")
+    public ResponseEntity<List<CircoloUtenteDTO>> getAllProposte(@PathVariable("idu") String idu) throws Exception {
+    	List<CircoloUtenteDTO> resultProposteDTO = circoloUtenteService.findAllIscrizioni(idu);
+        return ResponseEntity.ok().body(resultProposteDTO);
+    }
+    
     @PostMapping("/partecipazione/{idc}/{idu}/{l}")
     public ResponseEntity<CircoloUtenteDTO> partecipa(@PathVariable("idc") String idc, @PathVariable("idu") String idu, @PathVariable("l") String l) throws Exception {
     	return ResponseEntity.ok().body(circoloUtenteService.partecipa(idc,idu,l));
     }
     
-    @PutMapping("/rifiuta{idc}/{idu}")
+    @PutMapping("/rifiuta/{idc}/{idu}")
     public ResponseEntity<CircoloUtenteDTO> rifiutaCreazione(@PathVariable("idc") String idc, @PathVariable("idu") String idu) throws Exception {
     	return ResponseEntity.ok().body(circoloUtenteService.rifiutaCreazione(idc,idu));
     }

@@ -28,4 +28,10 @@ public interface CircoloUtenteRepository extends JpaRepository<CircoloUtente, In
 	@Query("FROM CircoloUtente e WHERE e.utente.id = ?1 and e.tipo = 'CREAZIONE' and e.stato != 'NON_APPROVATO'")
 	Optional<CircoloUtente> findCircoloNotRifiutatoByUtente(Integer uid);
 
+	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.tipo = 'ISCRIZIONE'")
+	List<CircoloUtente> findAllIscrizzioniByIdu(Integer cid);
+
+	@Query("FROM CircoloUtente e WHERE e.circolo.id = ?1 and e.utente.id = ?2 and e.tipo = 'ISCRIZIONE'")
+	CircoloUtente getIscrizioneByCircoloAndGuest(Integer idc, Integer idu);
+
 }

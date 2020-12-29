@@ -31,6 +31,50 @@ public class CircoloUtenteService {
 	
 	@Autowired
 	private CircoloRepository circoloRepository;
+
+	public CircoloUtenteDTO rifiutaPartecipazione(String idc, String idu, String ida) throws Exception {
+		if(isNaN(idc) || isNaN(idu) || isNaN(ida)) {
+    		throw new Exception("id non validi");
+    	}
+		CircoloUtente cu= circoloUtenteRepository.findCircoloApprovatoByUtente(Integer.parseInt(ida)).orElse(null);
+		if(cu.getCircolo().getId()!=Integer.parseInt(idc)) {
+			throw new Exception("Non è un tuo circolo");
+		}
+		CircoloUtente cu2= circoloUtenteRepository.getIscrizioneByCircoloAndGuest(Integer.parseInt(idc),Integer.parseInt(idu));
+		if(cu2==null) {
+			throw new Exception("Proposta di iscrizzione inesistente");
+		}
+		cu2.setStato(CircoloUtente.Stato.NON_APPROVATO);
+		return circoloUtenteMapper.convertEntityToDto(circoloUtenteRepository.save(cu2));
+	}
+	
+	public CircoloUtenteDTO approvaPartecipazione(String idc, String idu, String ida) throws Exception {
+		if(isNaN(idc) || isNaN(idu) || isNaN(ida)) {
+    		throw new Exception("id non validi");
+    	}
+		CircoloUtente cu= circoloUtenteRepository.findCircoloApprovatoByUtente(Integer.parseInt(ida)).orElse(null);
+		if(cu.getCircolo().getId()!=Integer.parseInt(idc)) {
+			throw new Exception("Non è un tuo circolo");
+		}
+		CircoloUtente cu2= circoloUtenteRepository.getIscrizioneByCircoloAndGuest(Integer.parseInt(idc),Integer.parseInt(idu));
+		if(cu2==null) {
+			throw new Exception("Proposta di iscrizzione inesistente");
+		}
+		cu2.setStato(CircoloUtente.Stato.APPROVATO);
+		return circoloUtenteMapper.convertEntityToDto(circoloUtenteRepository.save(cu2));
+	}
+		
+	public List<CircoloUtenteDTO> findAllIscrizioni(String idu) throws Exception {
+		if(isNaN(idu)) {
+			throw new Exception("id non valido");
+		}
+		CircoloUtente c = circoloUtenteRepository.findCircoloApprovatoByUtente(Integer.parseInt(idu)).orElse(null);
+		if(c==null) {
+			throw new Exception("L'admin non ha un circolo");
+		}
+		List<CircoloUtente> allCircoliUtenti = this.circoloUtenteRepository.findAllIscrizzioniByIdu(c.getCircolo().getId());
+        return circoloUtenteMapper.convertEntityToDto(allCircoliUtenti);
+	}
 	
     public List<CircoloUtenteDTO> findCreazioniInLavorazione() {
         List<CircoloUtente> allCircoliUtenti = this.circoloUtenteRepository.findAllCreazioniInLavorazione();
@@ -41,13 +85,13 @@ public class CircoloUtenteService {
 		if(cid==null || isNaN(cid) || uid==null || isNaN(uid)) {
     		throw new Exception("id non validi");
     	}
-		Utente ut = utenteRepository.getOne(Integer.parseInt(uid));
+
     	CircoloUtente cu= circoloUtenteRepository.findCreazioneByCircoloAndUtente(Integer.parseInt(cid), Integer.parseInt(uid)).orElse(null);
     	if(cu==null) {
     		throw new Exception("Proposta non trovata");
     	}
     	CircoloUtente cu2= circoloUtenteRepository.findCircoloApprovatoByUtente(Integer.parseInt(uid)).orElse(null);
-    	if(cu2==null && ut!=null) {
+    	if(cu2==null) {
     		Utente u = cu.getUtente();
     		u.setRuolo(Utente.Ruolo.ADMIN_ROLE);
     		utenteRepository.save(u);
