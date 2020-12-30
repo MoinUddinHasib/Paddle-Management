@@ -10,16 +10,27 @@ public class SlotMapper extends AbstractMapper<Slot, SlotDTO> {
 
 	@Override
 	public SlotDTO convertEntityToDto(Slot entity) {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(entity==null) 
+			return null;
+		
+		SlotDTO sDto= new SlotDTO();
+		sDto.setId(entity.getId().toString());
+		sDto.setOra(entity.getOra().toString());
+		sDto.setMinuti(entity.getMinuti().toString());
+		return sDto;
 	}
 
 	@Override
 	public Slot convertDtoToEntity(SlotDTO dto) throws Exception {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(dto==null)
+			return null;
+		
+		Slot s = new Slot();
+		if(dto.getId()!=null)
+			s.setId(Integer.parseInt(dto.getId()));
+		s.setOra(Integer.parseInt(dto.getOra()));
+		s.setMinuti(Integer.parseInt(dto.getMinuti()));
+		return s;
 	}
 
 }

@@ -42,8 +42,11 @@ public class CircoloUtenteService {
 		}
 		CircoloUtente cu2= circoloUtenteRepository.getIscrizioneByCircoloAndGuest(Integer.parseInt(idc),Integer.parseInt(idu));
 		if(cu2==null) {
-			throw new Exception("Proposta di iscrizzione inesistente");
+			throw new Exception("Proposta di iscrizione inesistente");
 		}
+		Utente u = cu2.getUtente();
+		u.setLivello(null);
+		utenteRepository.save(u);
 		cu2.setStato(CircoloUtente.Stato.NON_APPROVATO);
 		return circoloUtenteMapper.convertEntityToDto(circoloUtenteRepository.save(cu2));
 	}
@@ -58,8 +61,11 @@ public class CircoloUtenteService {
 		}
 		CircoloUtente cu2= circoloUtenteRepository.getIscrizioneByCircoloAndGuest(Integer.parseInt(idc),Integer.parseInt(idu));
 		if(cu2==null) {
-			throw new Exception("Proposta di iscrizzione inesistente");
+			throw new Exception("Proposta di iscrizione inesistente");
 		}
+		Utente u = cu2.getUtente();
+		u.setRuolo(Utente.Ruolo.PLAYER_ROLE);
+		utenteRepository.save(u);
 		cu2.setStato(CircoloUtente.Stato.APPROVATO);
 		return circoloUtenteMapper.convertEntityToDto(circoloUtenteRepository.save(cu2));
 	}
@@ -136,7 +142,7 @@ public class CircoloUtenteService {
 		if(c!=null &&  u!=null && cu!=null) {
 			CircoloUtente temp=new CircoloUtente();
 			u.setLivello(livello);
-			temp.setUtente(u);//TODO Cosa succede qui?
+			temp.setUtente(utenteRepository.save(u));
 			temp.setCircolo(c);
 			temp.setStato(CircoloUtente.Stato.IN_LAVORAZIONE);
 			temp.setTipo(CircoloUtente.Tipo.ISCRIZIONE);

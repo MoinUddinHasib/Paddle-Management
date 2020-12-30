@@ -10,16 +10,30 @@ public class CircoloMapper extends AbstractMapper<Circolo, CircoloDTO> {
 
 	@Override
 	public CircoloDTO convertEntityToDto(Circolo entity) {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(entity==null) 
+			return null;
+		
+		CircoloDTO circoloDto = new CircoloDTO();
+		circoloDto.setId(entity.getId().toString());
+		circoloDto.setNome(entity.getNome());
+		circoloDto.setCity(entity.getCity());
+		circoloDto.setLogo(entity.getLogo());
+		return circoloDto;
 	}
 
 	@Override
 	public Circolo convertDtoToEntity(CircoloDTO dto) throws Exception {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(dto==null)
+			return null;
+		
+		Circolo c = new Circolo();
+		if(dto.getId()!=null)
+			c.setId(Integer.parseInt(dto.getId()));
+		
+		c.setNome(dto.getNome());
+		c.setCity(dto.getCity());
+		c.setLogo(dto.getLogo());
+		return c;
 	}
 
 }

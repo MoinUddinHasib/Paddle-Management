@@ -5,36 +5,40 @@ import org.springframework.stereotype.Component;
 
 import it.solvingteam.paddle.dto.PartitaUtenteDTO;
 import it.solvingteam.paddle.model.PartitaUtente;
-import it.solvingteam.paddle.service.PartitaService;
-import it.solvingteam.paddle.service.UtenteService;
+import it.solvingteam.paddle.repository.PartitaRepository;
+import it.solvingteam.paddle.repository.UtenteRepository;
 
 @Component
 public class PartitaUtenteMapper extends AbstractMapper<PartitaUtente, PartitaUtenteDTO> {
 	
     @Autowired
-    private UtenteService utenteService;
+    private UtenteRepository utenteRepository;
     
     @Autowired
-    private PartitaService partitaService;
-    
-	@Autowired
-	private PartitaMapper partitaMapper;
-	
-	@Autowired
-	private UtenteMapper utenteMapper;
+    private PartitaRepository partitaRepository;
 
 	@Override
 	public PartitaUtenteDTO convertEntityToDto(PartitaUtente entity) {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(entity==null) 
+			return null;
+		
+		PartitaUtenteDTO pDto = new PartitaUtenteDTO();
+		pDto.setIdPartita(entity.getPartita().getId().toString());
+		pDto.setIdUtente(entity.getUtente().getId().toString());
+		pDto.setTipo(entity.getTipo().toString());
+		return pDto;
 	}
 
 	@Override
 	public PartitaUtente convertDtoToEntity(PartitaUtenteDTO dto) throws Exception {
-		System.err.println("Errore: "+this);
-		System.exit(1);
-		return null;
+		if(dto==null)
+			return null;
+		
+		PartitaUtente pu = new PartitaUtente();
+		pu.setPartita(partitaRepository.getOne(Integer.parseInt(dto.getIdPartita())));
+		pu.setUtente(utenteRepository.getOne(Integer.parseInt(dto.getIdUtente())));
+		pu.setTipo(PartitaUtente.Tipo.valueOf(dto.getTipo()));
+		return pu;
 	}
 
 }
